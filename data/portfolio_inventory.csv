@@ -1,0 +1,9 @@
+ProductType,Strategy,OptionType,Strike,Strike1,Strike2,Strike3,Maturity,Notional,Quantity,CouponRate,Spread,FixedRate,Frequency
+Zero-Coupon,,,,,,,1.0,100000,,,,,
+Coupon,,,,,,,2.0,100000,,0.03,,,2
+Floating,,,,,,,3.0,100000,,,0.001,,4
+Swap,,,,,,,5.0,100000,,,,0.05,2
+VanillaOption,,call,100,,,,0.5,,10,,,,
+VanillaOption,,put,90,,,,1.0,,5,,,,
+OptionStrategy,call_spread,,,95,105,,0.5,,2,,,,
+OptionStrategy,butterfly,,,90,100,110,0.5,,1,,,,
