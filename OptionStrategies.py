@@ -60,7 +60,9 @@ class OptionStrategiesPricer:
         return self._aggregate([(1,'call',K1),(-1,'call',K2)])
 
     def put_spread(self, K1, K2):
-        return self._aggregate([(1,'put',K1),(-1,'put',K2)])
+        # Assure que K1 > K2 pour un bear put spread correct
+        Kh, Kl = max(K1, K2), min(K1, K2)
+        return self._aggregate([(1,'put',Kh),(-1,'put',Kl)])
 
     def butterfly(self, K1, K2, K3):
         return self._aggregate([(1,'call',K1),(-2,'call',K2),(1,'call',K3)])
@@ -92,12 +94,19 @@ class OptionStrategiesPricer:
 
     def _get_legs(self, strategy, *args):
         """Retourne les jambes pour une stratégie donnée."""
-        if strategy == 'call_spread': return [(1,'call',args[0]),(-1,'call',args[1])]
-        if strategy == 'put_spread':  return [(1,'put',args[0]),(-1,'put',args[1])]
-        if strategy == 'butterfly':   return [(1,'call',args[0]),(-2,'call',args[1]),(1,'call',args[2])]
-        if strategy == 'collar':      return [(1,'spot',None),(1,'put',args[0]),(-1,'call',args[1])]
-        if strategy == 'strip':       return [(1,'call',args[0]),(2,'put',args[0])]
-        if strategy == 'strap':       return [(2,'call',args[0]),(1,'put',args[0])]
+        if strategy == 'call_spread':
+            return [(1,'call',args[0]),(-1,'call',args[1])]
+        if strategy == 'put_spread':
+            Kh, Kl = max(args[0], args[1]), min(args[0], args[1])
+            return [(1,'put',Kh),(-1,'put',Kl)]
+        if strategy == 'butterfly':
+            return [(1,'call',args[0]),(-2,'call',args[1]),(1,'call',args[2])]
+        if strategy == 'collar':
+            return [(1,'spot',None),(1,'put',args[0]),(-1,'call',args[1])]
+        if strategy == 'strip':
+            return [(1,'call',args[0]),(2,'put',args[0])]
+        if strategy == 'strap':
+            return [(2,'call',args[0]),(1,'put',args[0])]
         raise ValueError(f"Stratégie inconnue: {strategy}")
 
     def break_even(self, strategy, *args):
